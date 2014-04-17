@@ -1,6 +1,10 @@
 package dblockcache;
 
 public class CBuffer {
+	private boolean isBusy;
+	private boolean isClean;
+	private boolean ioComplete;
+	private byte[] buffer;
 	
 	/* Start an asynchronous fetch of associated block from the volume */
 	public void startFetch() {
@@ -24,7 +28,7 @@ public class CBuffer {
 	
 	/* Check whether the buffer is dirty, i.e., has modified data written back to disk? */
 	public boolean checkClean(){
-		
+		return isClean;
 	}
 	
 	/* Wait until the buffer is clean, i.e., wait until a push operation completes */
@@ -34,7 +38,7 @@ public class CBuffer {
 	
 	/* Check if buffer is evictable: not evictable if I/O in progress, or buffer is held */
 	public boolean isBusy(){
-		
+		return isBusy;
 	}
 
 	/*
@@ -59,7 +63,7 @@ public class CBuffer {
 	
 	/* An upcall from VirtualDisk layer to inform the completion of an IO operation */
 	public void ioComplete(){
-		
+		ioComplete = true;
 	}
 	
 	/* An upcall from VirtualDisk layer to fetch the blockID associated with a startRequest operation */
@@ -69,6 +73,6 @@ public class CBuffer {
 	
 	/* An upcall from VirtualDisk layer to fetch the buffer associated with DBuffer object*/
 	public byte[] getBuffer(){
-		
+		return buffer;
 	}
 }

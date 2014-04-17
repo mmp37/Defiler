@@ -1,7 +1,7 @@
 package dfs;
 
 import java.util.List;
-
+import java.util.ArrayList;
 import common.Constants;
 import common.DFileID;
 
@@ -9,6 +9,7 @@ public class CDFS extends DFS{
 	
 private boolean _format;
 private String _volName;
+private ArrayList<DFileID> _fileIDs;
 
 /* 
  * @volName: Explicitly overwrite volume name
@@ -67,8 +68,8 @@ public int sizeDFile(DFileID dFID) {
 /* 
  * List all the existing DFileIDs in the volume
  */
-public List<DFileID> listAllDFiles() {
-	
+public ArrayList<DFileID> listAllDFiles() {
+	return _fileIDs;
 }
 
 /* Write back all dirty blocks to the volume, and wait for completion. */

@@ -9,7 +9,14 @@ public class CDFS extends DFS{
 	
 private boolean _format;
 private String _volName;
-private ArrayList<DFileID> _fileIDs;
+private ArrayList<DFileID> fileIDs;
+private int numBlocks; // 2^18
+private int blockSize; // 1kB
+private int inodeSize; //32 Bytes
+private int numCacheBlocks; // 2^16
+private int maxFileSize; // Constraint on the max file size
+
+private int maxDFiles; // For recylcing DFileIDs
 
 /* 
  * @volName: Explicitly overwrite volume name
@@ -30,8 +37,14 @@ CDFS() {
 }
 
 /* Initialize all the necessary structures with sizes as specified in the common/Constants.java */
-public void init() {
-	
+public void init(int numBlock, int maxBlockSize, int maxInodeSize, int numCacheBlock, int maxNumDFiles) {
+	numBlocks = numBlock;
+	blockSize = maxBlockSize;
+	inodeSize = maxInodeSize;
+	numCacheBlocks = numCacheBlock;
+	maxDFiles = maxNumDFiles;
+	maxFileSize = blockSize*500;
+	fileIDs = new ArrayList<DFileID>();
 }
 
 /* creates a new DFile and returns the DFileID, which is useful to uniquely identify the DFile*/

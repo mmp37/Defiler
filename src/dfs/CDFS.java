@@ -11,6 +11,7 @@ public class CDFS extends DFS{
 private boolean _format;
 private String _volName;
 private ArrayList<DFileID> fileIDs;
+private DFileID deletedFile;
 private int numBlocks; // 2^18
 private int blockSize; // 1kB
 private int inodeSize; //32 Bytes
@@ -27,6 +28,7 @@ private int maxDFiles; // For recylcing DFileIDs
 CDFS(String volName, boolean format) {
 	_volName = volName;
 	_format = format;
+	deletedFile = new DFileID(-1);
 }
 
 CDFS(boolean format) {
@@ -50,12 +52,27 @@ public void init(int numBlock, int maxBlockSize, int maxInodeSize, int numCacheB
 
 /* creates a new DFile and returns the DFileID, which is useful to uniquely identify the DFile*/
 public DFileID createDFile() {
+	boolean finished = false;
+	int i;
+	for(i = 0; i <fileIDs.size(); i++) {
+		if(fileIDs.get(i).equals(deletedFile)) {
+			DFileID newFile = new DFileID(i);
+			fileIDs.set(i, newFile);
+			finished = true;
+		}
+	}
+	if(finished ==false) {
+		i++;
+		DFileID newFile = new DFileID(i);
+		fileIDs.add(newFile);
+	}
 	
 }
 
 /* destroys the file specified by the DFileID */
 public void destroyDFile(DFileID dFID){
-	
+	fileIDs.set(dFID.getDFileID(), deletedFile);
+	//need to mark blocks/inode on disk deleted
 }
 
 /*

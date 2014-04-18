@@ -32,11 +32,8 @@ private CBufferCache _cache;
 CDFS(String volName, boolean format) {
 	_volName = volName;
 	_format = format;
-<<<<<<< HEAD
 	deletedFile = new DFileID(-1);
-=======
 	_cache = new CBufferCache(numCacheBlocks * Constants.BLOCK_SIZE ,this);
->>>>>>> 71959a89127d113aa61813111d2a7f3dfd18f0b6
 }
 
 CDFS(boolean format) {

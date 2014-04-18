@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.ArrayList;
 import common.Constants;
 import common.DFileID;
+import dblockcache.CBufferCache;
 
 public class CDFS extends DFS{
 	
@@ -16,7 +17,9 @@ private int inodeSize; //32 Bytes
 private int numCacheBlocks; // 2^16
 private int maxFileSize; // Constraint on the max file size
 
-private int maxDFiles; // For recylcing DFileIDs
+private int maxDFiles; // For recycling DFileIDs
+
+private CBufferCache _cache;
 
 /* 
  * @volName: Explicitly overwrite volume name
@@ -26,6 +29,7 @@ private int maxDFiles; // For recylcing DFileIDs
 CDFS(String volName, boolean format) {
 	_volName = volName;
 	_format = format;
+	_cache = new CBufferCache(numCacheBlocks * Constants.BLOCK_SIZE ,this);
 }
 
 CDFS(boolean format) {

@@ -86,7 +86,7 @@ public int read(DFileID dFID, byte[] buffer, int startOffset, int count) {
 		CBuffer transaction = new CBuffer();
 		transaction.setFileID(dFID);
 		transaction.setBlockID(blockNum);
-		transaction.read(buffer, startOffset, count);
+		transaction.read(buffer, startOffset + (blockNum * blockSize), count);
 		countRem-=blockSize;
 		blockNum++;
 	}

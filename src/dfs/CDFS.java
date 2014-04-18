@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.ArrayList;
 import common.Constants;
 import common.DFileID;
+import dblockcache.CBuffer;
 
 public class CDFS extends DFS{
 	
@@ -62,7 +63,9 @@ public void destroyDFile(DFileID dFID){
  * buffer offset startOffset; at most count bytes are transferred
  */
 public int read(DFileID dFID, byte[] buffer, int startOffset, int count) {
-	
+	CBuffer transaction = new CBuffer();
+	transaction.setFileID(dFID);
+	transaction.read(buffer, startOffset, count);
 }
 
 /*
@@ -70,7 +73,9 @@ public int read(DFileID dFID, byte[] buffer, int startOffset, int count) {
  * buffer offset startOffset; at most count bytes are transferred
  */
 public int write(DFileID dFID, byte[] buffer, int startOffset, int count) {
-	
+	CBuffer transaction = new CBuffer();
+	transaction.setFileID(dFID);
+	transaction.write(buffer, startOffset, count);
 }
 
 /* returns the size in bytes of the file indicated by DFileID. */

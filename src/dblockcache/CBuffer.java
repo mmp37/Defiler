@@ -1,10 +1,17 @@
 package dblockcache;
 
+import common.DFileID;
+
 public class CBuffer {
 	private boolean isBusy;
 	private boolean isClean;
 	private boolean ioComplete;
 	private byte[] buffer;
+	private DFileID fileID;
+	
+	public void setFileID(DFileID newFileID) {
+		fileID = newFileID;
+	}
 	
 	/* Start an asynchronous fetch of associated block from the volume */
 	public void startFetch() {

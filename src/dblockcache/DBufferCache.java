@@ -7,14 +7,6 @@ public abstract class DBufferCache {
 	private int _cacheSize;
 	
 	/*
-	 * Constructor: allocates a cacheSize number of cache blocks, each
-	 * containing BLOCK-size bytes data, in memory
-	 */
-	public DBufferCache(int cacheSize) {
-		_cacheSize = cacheSize * Constants.BLOCK_SIZE;
-	}
-	
-	/*
 	 * Get buffer for block specified by blockID. The buffer is "held" until the
 	 * caller releases it. A "held" buffer cannot be evicted: its block ID
 	 * cannot change.

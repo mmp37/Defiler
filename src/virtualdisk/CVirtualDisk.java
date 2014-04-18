@@ -8,21 +8,22 @@ import common.Constants;
 import common.Constants.DiskOperationType;
 
 import dblockcache.CBuffer;
+import dblockcache.CBufferCache;
+import dblockcache.DBuffer;
 
-public class CVirtualDisk {
-
-	private String _volName;
-	private RandomAccessFile _file;
-	private int _maxVolSize;
+public class CVirtualDisk extends VirtualDisk{
+	
+	private CBufferCache _cache;
 
 	/*
 	 * VirtualDisk Constructors
 	 */
-	public CVirtualDisk(String volName, boolean format) throws FileNotFoundException,
+	public CVirtualDisk(String volName, boolean format, CBufferCache cache) throws FileNotFoundException,
 			IOException {
 
 		_volName = volName;
 		_maxVolSize = Constants.BLOCK_SIZE * Constants.NUM_OF_BLOCKS;
+		_cache = cache;
 
 		/*
 		 * mode: rws => Open for reading and writing, as with "rw", and also
@@ -37,84 +38,31 @@ public class CVirtualDisk {
 		 * set the length.
 		 */
 		_file.setLength(Constants.BLOCK_SIZE * Constants.NUM_OF_BLOCKS);
+		
 		if(format) {
-			formatStore();
+			this.formatStore();
 		}
 		/* Other methods as required */
+		// Setup INODE region.
 	}
-	
-	public CVirtualDisk(boolean format) throws FileNotFoundException,
-	IOException {
-		this(Constants.vdiskName, format);
-	}
-	
-	public CVirtualDisk() throws FileNotFoundException,
-	IOException {
-		this(Constants.vdiskName, false);
-	}
+
 
 	/*
 	 * Start an asynchronous request to the underlying device/disk/volume. 
 	 * -- buf is an DBuffer object that needs to be read/write from/to the volume.	
 	 * -- operation is either READ or WRITE  
 	 */
-	public void startRequest(CBuffer buf, DiskOperationType operation) throws IllegalArgumentException,
+	public void startRequest(DBuffer buf, DiskOperationType operation) throws IllegalArgumentException,
 			IOException {
 		if(operation == DiskOperationType.READ) {
-			readBlock(buf);
+			this.readBlock(buf);
 		}
 		else if(operation == DiskOperationType.WRITE) {
-			writeBlock(buf);
+			this.writeBlock(buf);
 		}
-	}
-	
-	/*
-	 * Clear the contents of the disk by writing 0s to it
-	 */
-	private void formatStore() {
-		byte b[] = new byte[Constants.BLOCK_SIZE];
-		setBuffer((byte) 0, b, Constants.BLOCK_SIZE);
-		for (int i = 0; i < Constants.NUM_OF_BLOCKS; i++) {
-			try {
-				int seekLen = i * Constants.BLOCK_SIZE;
-				_file.seek(seekLen);
-				_file.write(b, 0, Constants.BLOCK_SIZE);
-			} catch (Exception e) {
-				System.out.println("Error in format: WRITE operation failed at the device block " + i);
-			}
-		}
+		buf.ioComplete();
 	}
 
-	/*
-	 * helper function: setBuffer
-	 */
-	private static void setBuffer(byte value, byte b[], int bufSize) {
-		for (int i = 0; i < bufSize; i++) {
-			b[i] = value;
-		}
-	}
 
-	/*
-	 * Reads the buffer associated with DBuffer to the underlying
-	 * device/disk/volume
-	 */
-	private int readBlock(CBuffer buf) throws IOException {
-		int seekLen = buf.getBlockID() * Constants.BLOCK_SIZE;
-		/* Boundary check */
-		if (_maxVolSize < seekLen + Constants.BLOCK_SIZE) {
-			return -1;
-		}
-		_file.seek(seekLen);
-		return _file.read(buf.getBuffer(), 0, Constants.BLOCK_SIZE);
-	}
 
-	/*
-	 * Writes the buffer associated with DBuffer to the underlying
-	 * device/disk/volume
-	 */
-	private void writeBlock(CBuffer buf) throws IOException {
-		int seekLen = buf.getBlockID() * Constants.BLOCK_SIZE;
-		_file.seek(seekLen);
-		_file.write(buf.getBuffer(), 0, Constants.BLOCK_SIZE);
-	}
 }

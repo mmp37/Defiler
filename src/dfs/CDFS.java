@@ -80,9 +80,17 @@ public void destroyDFile(DFileID dFID){
  * buffer offset startOffset; at most count bytes are transferred
  */
 public int read(DFileID dFID, byte[] buffer, int startOffset, int count) {
-	CBuffer transaction = new CBuffer();
-	transaction.setFileID(dFID);
-	transaction.read(buffer, startOffset, count);
+	int countRem = count;
+	int blockNum = 0;
+	while(countRem > 0) {
+		CBuffer transaction = new CBuffer();
+		transaction.setFileID(dFID);
+		transaction.setBlockID(blockNum);
+		transaction.read(buffer, startOffset, count);
+		countRem-=blockSize;
+		blockNum++;
+	}
+	return count;
 }
 
 /*
@@ -90,9 +98,17 @@ public int read(DFileID dFID, byte[] buffer, int startOffset, int count) {
  * buffer offset startOffset; at most count bytes are transferred
  */
 public int write(DFileID dFID, byte[] buffer, int startOffset, int count) {
-	CBuffer transaction = new CBuffer();
-	transaction.setFileID(dFID);
-	transaction.write(buffer, startOffset, count);
+	int countRem = count;
+	int blockNum = 0;
+	while(countRem > 0) {
+		CBuffer transaction = new CBuffer();
+		transaction.setFileID(dFID);
+		transaction.setBlockID(blockNum);
+		transaction.write(buffer, startOffset, count);
+		countRem-=blockSize;
+		blockNum++;
+	}
+	return count;
 }
 
 /* returns the size in bytes of the file indicated by DFileID. */

@@ -8,9 +8,14 @@ public class CBuffer {
 	private boolean ioComplete;
 	private byte[] buffer;
 	private DFileID fileID;
+	private int blockID;
 	
 	public void setFileID(DFileID newFileID) {
 		fileID = newFileID;
+	}
+	
+	public void setBlockID(int block) {
+		blockID = block;
 	}
 	
 	/* Start an asynchronous fetch of associated block from the volume */

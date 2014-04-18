@@ -57,21 +57,19 @@ public void init(int numBlock, int maxBlockSize, int maxInodeSize, int numCacheB
 
 /* creates a new DFile and returns the DFileID, which is useful to uniquely identify the DFile*/
 public DFileID createDFile() {
-	boolean finished = false;
 	int i;
+	DFileID newFile;
 	for(i = 0; i <fileIDs.size(); i++) {
 		if(fileIDs.get(i).equals(deletedFile)) {
-			DFileID newFile = new DFileID(i);
+			newFile = new DFileID(i);
 			fileIDs.set(i, newFile);
-			finished = true;
+			return newFile;
 		}
 	}
-	if(finished ==false) {
-		i++;
-		DFileID newFile = new DFileID(i);
-		fileIDs.add(newFile);
-	}
-	
+	i++;
+	newFile = new DFileID(i);
+	fileIDs.add(newFile);
+	return newFile;
 }
 
 /* destroys the file specified by the DFileID */

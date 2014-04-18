@@ -3,6 +3,8 @@ package virtualdisk;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.List;
+import java.util.ArrayList;
 
 import common.Constants;
 import common.Constants.DiskOperationType;
@@ -41,9 +43,53 @@ public class CVirtualDisk extends VirtualDisk{
 		
 		if(format) {
 			this.formatStore();
+			initFormat();
+		}
+		else {
+			initPreExisting();
 		}
 		/* Other methods as required */
 		// Setup INODE region.
+	}
+	
+/*	
+	public static final int NUM_OF_BLOCKS = 262144; // 2^18
+	public static final int BLOCK_SIZE = 1024; // 1kB
+	public static final int INODE_SIZE = 32; //32 Bytes
+	public static final int NUM_OF_CACHE_BLOCKS = 65536; // 2^16
+	public static final int MAX_FILE_SIZE = BLOCK_SIZE*500; // Constraint on the max file size
+	public static final int MAX_DFILES = 512; // For recylcing DFileIDs
+*/
+	private void initFormat() throws IOException {		
+		//from block (((maxDfiles*inodesize)/Blocksize) + 1) to the end of the file, do nothing
+		//from block 1 - block ((maxDfiles*(inodesize +  4))/Blocksize), map memory space to inodes
+		int currBlock = (int)Math.ceil((Constants.MAX_DFILES * (Constants.INODE_SIZE + 4))/Constants.BLOCK_SIZE) + 1;
+		int filePtr;
+		for(int i = 0; i < Constants.MAX_DFILES; i++) {
+			filePtr = Constants.BLOCK_SIZE + (i* (Constants.INODE_SIZE+4)) + 4;
+			for(int j = 0; j < Constants.INODE_SIZE; j++) {
+				_file.seek(filePtr);
+				_file.write(currBlock);
+				filePtr++;
+				currBlock++;
+			}
+		}
+	}
+	
+	private List<Integer> initPreExisting() throws IOException {
+		ArrayList<Integer> files = new ArrayList<Integer>();
+		int filePtr;
+		int inUse;
+		for(int i = 0; i < Constants.MAX_DFILES; i++) {
+			filePtr = Constants.BLOCK_SIZE + (i* (Constants.INODE_SIZE+4));
+			_file.seek(filePtr);
+			inUse = _file.readInt();
+			if(1 == inUse) {
+				files.add(i+1, i+1);
+			}
+		}
+		
+		return files;//this info needs to get passed up to the CDFS on a non-formatted start
 	}
 
 

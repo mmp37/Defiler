@@ -60,7 +60,12 @@ public class CVirtualDisk {
 	 */
 	public void startRequest(CBuffer buf, DiskOperationType operation) throws IllegalArgumentException,
 			IOException {
-		
+		if(operation == DiskOperationType.READ) {
+			readBlock(buf);
+		}
+		else if(operation == DiskOperationType.WRITE) {
+			writeBlock(buf);
+		}
 	}
 	
 	/*

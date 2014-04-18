@@ -1,17 +1,23 @@
 package dblockcache;
 
+import virtualdisk.CVirtualDisk;
 import common.Constants;
+import dfs.CDFS;
 
 public class CBufferCache {
 	
 	private int _cacheSize;
+	private CVirtualDisk _disk;
+	private CDFS _dfs;
 	
 	/*
 	 * Constructor: allocates a cacheSize number of cache blocks, each
 	 * containing BLOCK-size bytes data, in memory
 	 */
-	public CBufferCache(int cacheSize) {
+	public CBufferCache(int cacheSize, CDFS dfs) {
 		_cacheSize = cacheSize * Constants.BLOCK_SIZE;
+		_dfs = dfs;
+		_disk = new CVirtualDisk(this);
 	}
 	
 	/*

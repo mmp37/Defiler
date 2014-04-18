@@ -6,7 +6,7 @@ public class CBuffer {
 	private boolean isBusy;
 	private boolean isClean;
 	private boolean ioComplete;
-	private byte[] buffer;
+	private byte[] myBuffer;
 	private DFileID fileID;
 	private int blockID;
 	
@@ -60,7 +60,16 @@ public class CBuffer {
 	 * return -1, otherwise return number of bytes read.
 	 */
 	public int read(byte[] buffer, int startOffset, int count){
-		
+		if(checkValid()) {
+			for(int i = 0; i < count; i++) {
+				buffer[startOffset+i] = myBuffer[i];
+			}
+		}
+		else {
+			//wait till valid? or just exit
+		}
+		return count;
+	
 	}
 
 	/*
@@ -70,7 +79,11 @@ public class CBuffer {
 	 * written.
 	 */
 	public int write(byte[] buffer, int startOffset, int count){
-		
+		for(int i = 0; i < count; i++) {
+			myBuffer[i] = buffer[startOffset+i];
+		}
+		isClean = false;
+		return count;
 	}
 	
 	/* An upcall from VirtualDisk layer to inform the completion of an IO operation */
@@ -80,11 +93,11 @@ public class CBuffer {
 	
 	/* An upcall from VirtualDisk layer to fetch the blockID associated with a startRequest operation */
 	public int getBlockID(){
-		
+		return blockID;
 	}
 	
 	/* An upcall from VirtualDisk layer to fetch the buffer associated with DBuffer object*/
 	public byte[] getBuffer(){
-		return buffer;
+		return myBuffer;
 	}
 }

@@ -82,6 +82,10 @@ public class CBufferCache extends DBufferCache{
 			}
 		}
 	}
+	
+	public CVirtualDisk getDisk(){
+		return _disk;
+	}
 
 	/*
 	 * sync() writes back all dirty blocks to the volume and wait for completion.

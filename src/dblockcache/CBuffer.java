@@ -4,12 +4,11 @@ import java.io.IOException;
 
 import virtualdisk.CVirtualDisk;
 import common.Constants.DiskOperationType;
-import common.DFileID;
 
 public class CBuffer extends DBuffer{
 	private boolean isHeld = false;
 	private boolean isPinned = false;	// IO is in progress
-	private boolean isClean = true;	// DFS has not released reference to dbuf
+	private boolean isClean = true;		// DFS has not released reference to dbuf
 	private boolean isValid = true;
 	private byte[] _buffer;
 
@@ -27,6 +26,11 @@ public class CBuffer extends DBuffer{
 	public void startFetch() {
 		isPinned = true;
 		// fetch
+		try {
+			_disk.startRequest(this, DiskOperationType.READ);
+		} catch (IllegalArgumentException | IOException e) {
+			e.printStackTrace();
+		}
 		isValid = true;
 	}
 

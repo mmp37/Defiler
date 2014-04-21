@@ -4,6 +4,7 @@ package common;
 public class DFileID {
 
 	private int _dFID;
+	private int _size = 0;
 
 	public DFileID(int dFID) {
 		_dFID = dFID;
@@ -23,5 +24,13 @@ public class DFileID {
 	    
 	public String toString(){
 		return _dFID+"";
+	}
+	
+	public void setSize(int size){
+		_size = size;
+	}
+	
+	public int getSize(){
+		return _size;
 	}
 }
